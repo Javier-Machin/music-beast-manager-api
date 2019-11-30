@@ -1,0 +1,24 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: music_beast_manager_development
+  username: javi
+  password: 1234
+  host: localhost
+
+test:
+  <<: *default
+  database: music_beast_manager_test
+  username: javi
+  password: 1234
+  host: localhost
+
+production:
+  <<: *default
+  database: music_beast_manager_production
+  username: music_beast_manager
+  password: <%= ENV['MUSIC_BEAST_MANAGER_DATABASE_PASSWORD'] %>
