@@ -55,7 +55,7 @@ RSpec.describe 'Tracks API', type: :request do
     let(:valid_attributes) { 
       { 
         title: '2 minutes to midnight', 
-        created_by: '1',
+        created_by: create_list(:user, 1)[0].id,
         artist: {
           name: 'Iron Maiden'
         }
@@ -63,8 +63,9 @@ RSpec.describe 'Tracks API', type: :request do
     }
 
     context 'when the request is valid' do
-      before { post '/tracks', params: valid_attributes }
-
+      before do 
+        post '/tracks', params: valid_attributes 
+      end
       it 'creates a track' do
         expect(json['title']).to eq('2 minutes to midnight')
       end
@@ -83,7 +84,7 @@ RSpec.describe 'Tracks API', type: :request do
 
       it 'returns a validation failure message' do
         expect(response.body)
-          .to match(/Validation failed: Created by can't be blank/)
+          .to match(/Validation failed: User must exist, Created by can't be blank, Artist can't be blank/)
       end
     end
   end
