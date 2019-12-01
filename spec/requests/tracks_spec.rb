@@ -1,14 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe 'Tracks API', type: :request do
-  # initialize test data 
-  let!(:tracks) { create_list(:track, 10) }
+  # add tracks owner
+  let(:user) { create(:user) }
+
+  let!(:tracks) { create_list(:track, 10, created_by: user.id) }
   let(:track_id) { tracks.first.id }
+
+  # authorize request
+  let(:headers) { valid_headers }
 
   # Test suite for GET /tracks
   describe 'GET /tracks' do
     # make HTTP get request before each example
-    before { get '/tracks' }
+    before { get '/tracks', params: {}, headers: headers }
 
     it 'returns tracks' do
       # Note `json` is a custom helper to parse JSON responses
@@ -23,7 +28,7 @@ RSpec.describe 'Tracks API', type: :request do
 
   # Test suite for GET /tracks/:id
   describe 'GET /tracks/:id' do
-    before { get "/tracks/#{track_id}" }
+    before { get "/tracks/#{track_id}", params: {}, headers: headers }
 
     context 'when the record exists' do
       it 'returns the track' do
@@ -55,15 +60,15 @@ RSpec.describe 'Tracks API', type: :request do
     let(:valid_attributes) { 
       { 
         title: '2 minutes to midnight', 
-        created_by: create(:user).id,
+        created_by: user.id,
         artist: {
           name: 'Iron Maiden'
         }
-      } 
+      }.to_json
     }
 
     context 'when the request is valid' do
-      before { post '/tracks', params: valid_attributes }
+      before { post '/tracks', params: valid_attributes, headers: headers }
       
       it 'creates a track' do
         expect(json['title']).to eq('2 minutes to midnight')
@@ -75,28 +80,28 @@ RSpec.describe 'Tracks API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/tracks', params: { title: 'Foobar' } }
+      before { post '/tracks', params: { title: 'Foobar' }.to_json, headers: headers  }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
       end
 
       it 'returns a validation failure message' do
-        expect(response.body)
-          .to match(/Validation failed: User must exist, Created by can't be blank, Artist can't be blank/)
+        expect(json['message'])
+          .to match(/Validation failed: Artist can't be blank/)
       end
     end
   end
 
   # Test suite for PATCH /tracks/:id
   describe 'PATCH /tracks/:id' do
-    let(:valid_attributes) { { title: 'Shopping' } }
+    let(:valid_attributes) { { title: 'Shopping' }.to_json }
 
     context 'when the record exists' do
-      before { patch "/tracks/#{track_id}", params: valid_attributes }
+      before { patch "/tracks/#{track_id}", params: valid_attributes, headers: headers }
 
       it 'updates the record and returns updated item' do
-        expect(response.body).to include(valid_attributes[:title])
+        expect(JSON.parse(response.body)).to include(JSON.parse(valid_attributes))
       end
 
       it 'returns status code 200' do
@@ -107,7 +112,7 @@ RSpec.describe 'Tracks API', type: :request do
 
   # Test suite for DELETE /tracks/:id
   describe 'DELETE /tracks/:id' do
-    before { delete "/tracks/#{track_id}" }
+    before { delete "/tracks/#{track_id}", params: {}, headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

@@ -3,13 +3,13 @@ class TracksController < ApplicationController
 
   # GET /tracks
   def index
-    @tracks = Track.all
+    @tracks = current_user.tracks
     json_response(@tracks)
   end
 
   # POST /tracks
   def create
-    @track = Track.create!(track_params)
+    @track = current_user.tracks.create!(track_params)
     json_response(@track, :created)
   end
 
@@ -34,7 +34,7 @@ class TracksController < ApplicationController
 
   def track_params
     # whitelist params
-    params.permit(:title, :created_by, artist: [:name], file: :data)
+    params.permit(:title, artist: [:name], file: :data)
   end
 
   def set_track
