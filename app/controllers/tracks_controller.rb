@@ -18,10 +18,10 @@ class TracksController < ApplicationController
     json_response(@track)
   end
 
-  # PUT /tracks/:id
+  # PATCH /tracks/:id
   def update
     @track.update(track_params)
-    head :no_content
+    json_response(@track)
   end
 
   # DELETE /tracks/:id
@@ -34,7 +34,7 @@ class TracksController < ApplicationController
 
   def track_params
     # whitelist params
-    params.permit(:title, :created_by, {:artist => [:name]}, file: :data)
+    params.permit(:title, :created_by, artist: [:name], file: :data)
   end
 
   def set_track

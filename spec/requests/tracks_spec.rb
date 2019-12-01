@@ -55,7 +55,7 @@ RSpec.describe 'Tracks API', type: :request do
     let(:valid_attributes) { 
       { 
         title: '2 minutes to midnight', 
-        created_by: create_list(:user, 1)[0].id,
+        created_by: create(:user).id,
         artist: {
           name: 'Iron Maiden'
         }
@@ -63,9 +63,8 @@ RSpec.describe 'Tracks API', type: :request do
     }
 
     context 'when the request is valid' do
-      before do 
-        post '/tracks', params: valid_attributes 
-      end
+      before { post '/tracks', params: valid_attributes }
+      
       it 'creates a track' do
         expect(json['title']).to eq('2 minutes to midnight')
       end
@@ -89,19 +88,19 @@ RSpec.describe 'Tracks API', type: :request do
     end
   end
 
-  # Test suite for PUT /tracks/:id
-  describe 'PUT /tracks/:id' do
+  # Test suite for PATCH /tracks/:id
+  describe 'PATCH /tracks/:id' do
     let(:valid_attributes) { { title: 'Shopping' } }
 
     context 'when the record exists' do
-      before { put "/tracks/#{track_id}", params: valid_attributes }
+      before { patch "/tracks/#{track_id}", params: valid_attributes }
 
-      it 'updates the record' do
-        expect(response.body).to be_empty
+      it 'updates the record and returns updated item' do
+        expect(response.body).to include(valid_attributes[:title])
       end
 
-      it 'returns status code 204' do
-        expect(response).to have_http_status(204)
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
       end
     end
   end
