@@ -17,8 +17,8 @@ RSpec.describe 'Tracks API', type: :request do
 
     it 'returns tracks' do
       # Note `json` is a custom helper to parse JSON responses
-      expect(json).not_to be_empty
-      expect(json.size).to eq(10)
+      expect(json["tracks"]).not_to be_empty
+      expect(json["tracks"].length).to eq(10)
     end
 
     it 'returns status code 200' do

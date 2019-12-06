@@ -3,7 +3,7 @@ class TracksController < ApplicationController
 
   # GET /tracks
   def index
-    @tracks = current_user.tracks
+    @tracks = tracks_with_pagination
     json_response(@tracks)
   end
 
