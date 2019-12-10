@@ -4,7 +4,7 @@ class TracksController < ApplicationController
   # GET /tracks
   def index
     @tracks = tracks_with_pagination
-    json_response(@tracks)
+    json_response(@tracks, nil, 'index')
   end
 
   # POST /tracks
@@ -15,7 +15,7 @@ class TracksController < ApplicationController
 
   # GET /tracks/:id
   def show
-    json_response(@track)
+    json_response(@track, nil, params[:serializer])
   end
 
   # PATCH /tracks/:id
@@ -34,7 +34,7 @@ class TracksController < ApplicationController
 
   def track_params
     # whitelist params
-    params.permit(:title, artist: [:name], file: :data)
+    params.permit(:title, :lyrics, :file, :serializer, artist: [:name])
   end
 
   def set_track
