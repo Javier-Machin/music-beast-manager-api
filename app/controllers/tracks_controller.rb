@@ -34,7 +34,7 @@ class TracksController < ApplicationController
 
   def track_params
     # whitelist params
-    params.permit(:title, :lyrics, :file, :serializer, artist: [:name])
+    params.permit(:title, :lyrics, :file, :serializer, :explicit, artist: [:name])
   end
 
   def set_track
