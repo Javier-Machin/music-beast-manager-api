@@ -24,7 +24,9 @@ module WithPagination
       next_page = params[:page].to_i + 1 if next_page_track_count >= 1
     end
 
-    tracks = current_user.tracks.paginate(page: params[:page], per_page: params[:per_page])
+    tracks = current_user.tracks
+                         .paginate(page: params[:page], per_page: params[:per_page])
+                         .order('created_at desc')
 
     {
       tracks: tracks,
